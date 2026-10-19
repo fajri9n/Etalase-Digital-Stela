@@ -1,0 +1,253 @@
+/* ==========================================================
+   Etalase Digital Stella - Main Stylesheet
+   Background Foto Sekolah (gd4.jpeg) dengan Efek Blur & Overlay
+   ========================================================== */
+
+/* Background Foto Sekolah Full-Screen dengan Overlay */
+.bg-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../img/gd4.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    filter: blur(2px) brightness(0.6);
+    -webkit-filter: blur(2px) brightness(0.6);
+    transform: scale(1.05); /* Mencegah border putih saat filter blur aktif */
+    z-index: -1;
+    pointer-events: none;
+}
+
+body {
+    min-height: 100vh;
+    margin: 0;
+    position: relative;
+    color: #1e293b;
+    font-family: 'Plus Jakarta Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Navbar dengan Efek Frosted Glass Terang */
+.navbar {
+    background: rgba(255, 255, 255, 0.94) !important;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 2px solid #007bff;
+    padding: 12px 30px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.navbar h2 {
+    color: #007bff;
+    font-size: 20px;
+    font-weight: 800;
+    margin: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+}
+
+/* Banner Header di atas Galeri */
+.showcase-banner {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 18px;
+    padding: 25px 30px;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.showcase-banner-text h1 {
+    font-size: 24px;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 5px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.showcase-banner-text p {
+    font-size: 14px;
+    color: #e2e8f0;
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+}
+
+/* Kotak Pencarian Interaktif */
+.search-box-wrapper {
+    position: relative;
+    width: 320px;
+}
+
+.search-box-input {
+    width: 100%;
+    padding: 11px 16px 11px 40px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.95);
+    color: #1e293b;
+    font-size: 14px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.search-box-input:focus {
+    background: #ffffff;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.35);
+}
+
+.search-box-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+    font-size: 15px;
+    pointer-events: none;
+}
+
+/* Grid Proyek */
+.grid-projects {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    gap: 25px;
+    margin-bottom: 50px;
+}
+
+/* Kartu Proyek yang Kontras & Timbul di atas Background Sekolah */
+.card-project {
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+.card-project:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 18px 35px rgba(0, 0, 0, 0.45);
+}
+
+.card-img-wrapper {
+    position: relative;
+    width: 100%;
+    height: 195px;
+    overflow: hidden;
+    background: #e2e8f0;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.card-project:hover .card-img-top {
+    transform: scale(1.05);
+}
+
+.card-body {
+    padding: 22px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #1e293b;
+    line-height: 1.35;
+}
+
+.card-author {
+    font-size: 12px;
+    color: #64748b;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.card-author b {
+    color: #1e293b;
+}
+
+.card-text {
+    font-size: 14px;
+    color: #475569;
+    margin-bottom: 16px;
+    flex-grow: 1;
+    line-height: 1.6;
+}
+
+.card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 14px;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.card-link:hover {
+    color: #0056b3;
+    transform: translateX(4px);
+}
+
+.card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    padding-top: 14px;
+    border-top: 1px solid #f1f5f9;
+}
+
+/* Responsif */
+@media (max-width: 768px) {
+    .showcase-banner {
+        padding: 20px;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .search-box-wrapper {
+        width: 100%;
+    }
+
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 15px 20px;
+    }
+
+    .navbar-user {
+        flex-wrap: wrap;
+        width: 100%;
+    }
+}
