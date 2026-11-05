@@ -1,22 +1,27 @@
 /* ==========================================================
-   Etalase Digital Stella - Main Stylesheet
-   Background Foto Sekolah (gd4.jpeg) dengan Efek Blur & Overlay
+   ETALASE DIGITAL STELLA - MAIN STYLESHEET
+   Luxury Atmospheric Theme with Glassmorphism & High-End Cards
    ========================================================== */
+@import url('navbar.css');
 
-/* Background Foto Sekolah Full-Screen dengan Overlay */
+/* Background Foto Sekolah Full-Screen dengan Overlay Mewah */
 .bg-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url('../img/gd4.jpeg');
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(220, 38, 38, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(153, 27, 27, 0.2) 0%, transparent 45%),
+        linear-gradient(180deg, rgba(15, 23, 42, 0.72) 0%, rgba(10, 15, 28, 0.88) 100%),
+        url('../img/gd4.jpeg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    filter: blur(2px) brightness(0.6);
-    -webkit-filter: blur(2px) brightness(0.6);
-    transform: scale(1.05); /* Mencegah border putih saat filter blur aktif */
+    filter: blur(2px);
+    -webkit-filter: blur(2px);
+    transform: scale(1.05);
     z-index: -1;
     pointer-events: none;
 }
@@ -26,89 +31,134 @@ body {
     margin: 0;
     position: relative;
     color: #1e293b;
-    font-family: 'Plus Jakarta Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-/* Navbar dengan Efek Frosted Glass Terang */
-.navbar {
-    background: rgba(255, 255, 255, 0.94) !important;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border-bottom: 2px solid #007bff;
-    padding: 12px 30px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.navbar h2 {
-    color: #007bff;
-    font-size: 20px;
-    font-weight: 800;
-    margin: 0;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
 }
 
 .container {
-    max-width: 1200px;
-    margin: 30px auto;
+    max-width: 1240px;
+    margin: 32px auto 60px;
     padding: 0 20px;
+    position: relative;
+    z-index: 10;
 }
 
-/* Banner Header di atas Galeri */
+/* ==========================================================
+   SHOWCASE BANNER (HERO)
+   ========================================================== */
 .showcase-banner {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 18px;
-    padding: 25px 30px;
-    margin-bottom: 30px;
+    position: relative;
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 24px;
+    padding: 32px 36px;
+    margin-bottom: 32px;
+    box-shadow: 
+        0 20px 45px -10px rgba(0, 0, 0, 0.35),
+        0 0 35px rgba(220, 38, 38, 0.08);
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
-    gap: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    gap: 22px;
+    overflow: hidden;
+    animation: bannerEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes bannerEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.showcase-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4.5px;
+    background: linear-gradient(90deg, #991b1b, #dc2626, #f87171, #ef4444);
+}
+
+.showcase-banner-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 5px 12px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.showcase-banner-badge .badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #dc2626;
+    box-shadow: 0 0 8px #dc2626;
 }
 
 .showcase-banner-text h1 {
-    font-size: 24px;
+    font-size: 25px;
     font-weight: 800;
-    color: #ffffff;
-    margin-bottom: 5px;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    color: #0f172a;
+    margin: 0 0 6px;
+    letter-spacing: -0.4px;
+    line-height: 1.25;
 }
 
 .showcase-banner-text p {
-    font-size: 14px;
-    color: #e2e8f0;
-    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+    font-size: 13.5px;
+    color: #64748b;
+    margin: 0;
+    line-height: 1.55;
 }
 
-/* Kotak Pencarian Interaktif */
+/* Toolbar: Search & Action */
+.showcase-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
 .search-box-wrapper {
     position: relative;
-    width: 320px;
+    width: 310px;
 }
 
 .search-box-input {
     width: 100%;
-    padding: 11px 16px 11px 40px;
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    background: rgba(255, 255, 255, 0.95);
-    color: #1e293b;
-    font-size: 14px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    height: 46px;
+    padding: 0 16px 0 42px;
+    border-radius: 12px;
+    border: 1.5px solid #e2e8f0;
+    background: #f8fafc;
+    color: #0f172a;
+    font-family: inherit;
+    font-size: 13.5px;
     outline: none;
     transition: all 0.2s ease;
 }
 
 .search-box-input:focus {
     background: #ffffff;
-    border-color: #007bff;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.35);
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
 }
 
 .search-box-icon {
@@ -116,57 +166,106 @@ body {
     left: 14px;
     top: 50%;
     transform: translateY(-50%);
-    color: #64748b;
-    font-size: 15px;
+    color: #94a3b8;
     pointer-events: none;
+    display: flex;
+    align-items: center;
 }
 
-/* Grid Proyek */
+.search-box-wrapper:focus-within .search-box-icon {
+    color: #dc2626;
+}
+
+.total-karya-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 46px;
+    padding: 0 18px;
+    background: #f8fafc;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #334155;
+    white-space: nowrap;
+}
+
+.total-karya-pill b {
+    color: #dc2626;
+    font-size: 14px;
+}
+
+/* ==========================================================
+   GRID PROJECTS
+   ========================================================== */
 .grid-projects {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-    gap: 25px;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 26px;
     margin-bottom: 50px;
 }
 
-/* Kartu Proyek yang Kontras & Timbul di atas Background Sekolah */
+/* Project Card */
 .card-project {
-    background: rgba(255, 255, 255, 0.97);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
-    border: 1px solid rgba(255, 255, 255, 0.9);
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     flex-direction: column;
+    position: relative;
+    cursor: pointer;
 }
 
 .card-project:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 18px 35px rgba(0, 0, 0, 0.45);
+    transform: translateY(-7px);
+    box-shadow: 0 22px 45px rgba(0, 0, 0, 0.38), 0 0 25px rgba(220, 38, 38, 0.12);
 }
 
 .card-img-wrapper {
     position: relative;
     width: 100%;
-    height: 195px;
+    height: 205px;
     overflow: hidden;
-    background: #e2e8f0;
+    background: #0f172a;
 }
 
 .card-img-top {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.4s ease;
+    display: block;
+    transition: transform 0.45s ease;
 }
 
 .card-project:hover .card-img-top {
-    transform: scale(1.05);
+    transform: scale(1.06);
 }
 
+/* Date Pill floating on image */
+.card-floating-date {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    padding: 4px 10px;
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(8px);
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Card Body */
 .card-body {
     padding: 22px;
     flex-grow: 1;
@@ -174,80 +273,331 @@ body {
     flex-direction: column;
 }
 
-.card-title {
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 6px;
-    color: #1e293b;
-    line-height: 1.35;
-}
-
-.card-author {
-    font-size: 12px;
-    color: #64748b;
-    margin-bottom: 12px;
+/* Author Row with Avatar */
+.card-author-row {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 10px;
+    margin-bottom: 12px;
 }
 
-.card-author b {
-    color: #1e293b;
+.author-mini-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    color: #ffffff;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.author-mini-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.author-name-text {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+.author-name-text b {
+    color: #0f172a;
+    font-weight: 700;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 800;
+    margin: 0 0 8px;
+    color: #0f172a;
+    line-height: 1.35;
+    letter-spacing: -0.3px;
+    transition: color 0.2s ease;
+}
+
+.card-project:hover .card-title {
+    color: #dc2626;
 }
 
 .card-text {
-    font-size: 14px;
-    color: #475569;
-    margin-bottom: 16px;
+    font-size: 13.5px;
+    color: #64748b;
+    margin-bottom: 18px;
     flex-grow: 1;
     line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
-.card-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    color: #007bff;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 14px;
-    transition: color 0.2s ease, transform 0.2s ease;
-}
-
-.card-link:hover {
-    color: #0056b3;
-    transform: translateX(4px);
-}
-
-.card-actions {
+/* Card Links and External Arrow */
+.card-footer-row {
     display: flex;
-    gap: 10px;
-    margin-top: 15px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: auto;
     padding-top: 14px;
     border-top: 1px solid #f1f5f9;
 }
 
-/* Responsif */
-@media (max-width: 768px) {
+.card-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #dc2626;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.card-link-btn:hover {
+    color: #991b1b;
+    transform: translateX(3px);
+}
+
+.card-actions-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-card-edit,
+.btn-card-delete {
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.2s ease;
+}
+
+.btn-card-edit {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fcd34d;
+}
+
+.btn-card-edit:hover {
+    background: #fde68a;
+}
+
+.btn-card-delete {
+    background: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
+}
+
+.btn-card-delete:hover {
+    background: #fee2e2;
+}
+
+/* ==========================================================
+   PROJECT DETAIL MODAL
+   ========================================================== */
+.project-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.project-modal.active {
+    display: flex;
+}
+
+.project-modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.78);
+    backdrop-filter: blur(10px);
+}
+
+.project-modal-box {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 960px;
+    max-height: 90vh;
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    overflow: hidden;
+    background: #ffffff;
+    border-radius: 26px;
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
+    animation: projectModalShow .25s ease;
+}
+
+.project-modal-image {
+    width: 100%;
+    height: 100%;
+    min-height: 480px;
+    background: #0f172a;
+    overflow: hidden;
+    position: relative;
+}
+
+.project-modal-image img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.project-modal-content {
+    padding: 42px 38px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow-y: auto;
+}
+
+.modal-label {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: #dc2626;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+.project-modal-content h2 {
+    margin: 0 0 14px;
+    color: #0f172a;
+    font-size: 26px;
+    line-height: 1.25;
+    font-weight: 800;
+    letter-spacing: -0.4px;
+}
+
+.modal-project-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.modal-project-meta span {
+    padding: 6px 12px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.modal-divider {
+    width: 100%;
+    height: 1px;
+    margin: 20px 0;
+    background: #f1f5f9;
+}
+
+.project-modal-content p {
+    margin: 0 0 24px;
+    color: #64748b;
+    font-size: 13.5px;
+    line-height: 1.75;
+    white-space: pre-line;
+}
+
+.modal-project-button {
+    width: 100%;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 13.5px;
+    font-weight: 700;
+    box-shadow: 0 8px 22px rgba(220, 38, 38, 0.35);
+    transition: all .2s ease;
+}
+
+.modal-project-button:hover {
+    transform: translateY(-2px);
+    background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%);
+    box-shadow: 0 12px 28px rgba(220, 38, 38, 0.45);
+}
+
+.project-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 10;
+    width: 38px;
+    height: 38px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(15, 23, 42, .75);
+    color: white;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .2s ease;
+}
+
+.project-modal-close:hover {
+    background: #dc2626;
+    transform: rotate(90deg);
+}
+
+/* ==========================================================
+   RESPONSIVE DESIGN
+   ========================================================== */
+@media (max-width: 900px) {
     .showcase-banner {
-        padding: 20px;
+        padding: 24px;
         flex-direction: column;
         align-items: flex-start;
+    }
+
+    .showcase-toolbar {
+        width: 100%;
     }
 
     .search-box-wrapper {
         width: 100%;
     }
 
-    .navbar {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-        padding: 15px 20px;
+    .project-modal-box {
+        grid-template-columns: 1fr;
+        max-height: 92vh;
+        overflow-y: auto;
     }
 
-    .navbar-user {
-        flex-wrap: wrap;
-        width: 100%;
+    .project-modal-image {
+        min-height: 240px;
+        height: 240px;
+    }
+
+    .project-modal-content {
+        padding: 28px 24px;
     }
 }

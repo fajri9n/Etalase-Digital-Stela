@@ -19,3 +19,19 @@ function check_role($roles = []) {
         die("Akses Ditolak: Anda tidak memiliki hak akses ke halaman ini.");
     }
 }
+
+function get_logged_user($pdo) {
+    if (!isset($_SESSION['user_id'])) {
+        return null;
+    }
+    $stmt = $pdo->prepare("SELECT id, nama, email, role, foto FROM users WHERE id = :id");
+    $stmt->execute([':id' => $_SESSION['user_id']]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($user) {
+        $_SESSION['nama'] = $user['nama'];
+        $_SESSION['role'] = $user['role'];
+        $_SESSION['foto'] = $user['foto'];
+    }
+    return $user;
+}
+

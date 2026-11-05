@@ -64,6 +64,23 @@ if (isset($_GET['hapus'])) {
 }
 
 $users = $pdo->query("SELECT * FROM users ORDER BY role ASC, id ASC")->fetchAll();
+
+// Data User untuk Navbar Modern
+$currentUser = get_logged_user($pdo);
+$user_nama = htmlspecialchars($currentUser['nama'] ?? $_SESSION['nama'] ?? 'Super Admin');
+$user_role = htmlspecialchars($currentUser['role'] ?? $_SESSION['role'] ?? 'super_admin');
+$user_foto = $currentUser['foto'] ?? null;
+
+$initials = '';
+$words = preg_split('/\s+/', trim($user_nama));
+foreach (array_slice($words, 0, 2) as $w) {
+    if (!empty($w)) $initials .= strtoupper(mb_substr($w, 0, 1));
+}
+if (empty($initials)) $initials = 'SA';
+
+$role_badge_class = 'role-badge-' . $user_role;
+$role_title = ucwords(str_replace('_', ' ', $user_role));
+$role_icon = '👑';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -71,21 +88,132 @@ $users = $pdo->query("SELECT * FROM users ORDER BY role ASC, id ASC")->fetchAll(
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola User - Super Admin</title>
-    <!-- Hubungkan CSS Base, Form, dan Admin -->
+    <!-- Modern Typography Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Hubungkan CSS Base, Navbar, Form, dan Admin -->
     <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/navbar.css">
     <link rel="stylesheet" href="../assets/css/form.css">
     <link rel="stylesheet" href="../assets/css/admin.css">
 </head>
 
 <body>
 
-<nav class="navbar">
-    <h2>Manajemen User & Hak Akses</h2>
-    <div class="navbar-user">
-        <a href="../index.php" class="btn btn-secondary">&larr; Kembali ke Etalase</a>
-        <a href="../auth/logout.php" class="btn btn-danger">Logout</a>
+<!-- Modern Glassmorphism Navbar -->
+<nav class="navbar" id="mainNavbar">
+    <!-- Brand Info -->
+    <a href="../index.php" class="navbar-brand-link" title="Kembali ke Beranda">
+        <div class="brand-logo-frame">
+            <img src="../assets/img/logo-ts2.png" alt="Logo Stella" class="brand-logo-img" onerror="this.style.display='none';">
+        </div>
+        <div class="brand-text-col">
+            <h1 class="brand-main-title">Stella <span class="brand-gradient-text">Etalase Digital</span></h1>
+            <div class="brand-meta-row">
+                <span class="brand-badge-pill">
+                    <span class="brand-live-dot"></span> PANEL ADMIN
+                </span>
+                <span class="brand-page-tag">&bull; Manajemen Users</span>
+            </div>
+        </div>
+    </a>
+
+    <!-- Desktop Menu & User Actions -->
+    <div class="navbar-menu-group">
+        <!-- User Capsule Link ke Profil -->
+        <a href="../profile.php" class="navbar-user-capsule user-capsule-<?= $user_role ?>" title="Buka Profil Saya" style="text-decoration: none;">
+            <div class="user-avatar-circle">
+                <?php if (!empty($user_foto) && file_exists('../uploads/avatars/' . $user_foto)): ?>
+                    <img src="../uploads/avatars/<?= htmlspecialchars($user_foto) ?>" alt="<?= $user_nama ?>">
+                <?php else: ?>
+                    <?= $initials ?>
+                <?php endif; ?>
+            </div>
+            <div class="user-meta-text">
+                <span class="user-greeting-label">Akun Saya,</span>
+                <span class="user-name-label"><?= $user_nama ?></span>
+            </div>
+            <span class="role-badge-pill <?= $role_badge_class ?>">
+                <?= $role_icon ?> <?= $role_title ?>
+            </span>
+        </a>
+
+        <a href="../profile.php" class="nav-btn btn-nav-secondary" title="Kelola Profil & Foto">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span>Profil Saya</span>
+        </a>
+
+        <a href="../index.php" class="nav-btn btn-nav-secondary">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>Kembali ke Galeri</span>
+        </a>
+
+        <a href="../auth/logout.php" class="nav-btn btn-nav-danger" title="Keluar">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            <span>Logout</span>
+        </a>
+    </div>
+
+    <!-- Mobile Toggle Button -->
+    <button class="navbar-toggle-btn" id="navbarToggle" aria-label="Menu Navigasi">
+        <span class="navbar-toggle-bar"></span>
+        <span class="navbar-toggle-bar"></span>
+        <span class="navbar-toggle-bar"></span>
+    </button>
+
+    <!-- Mobile Drawer Panel -->
+    <div class="navbar-mobile-drawer" id="navbarMobileDrawer">
+        <a href="../profile.php" class="navbar-user-capsule user-capsule-<?= $user_role ?>" style="text-decoration: none;">
+            <div class="user-avatar-circle">
+                <?php if (!empty($user_foto) && file_exists('../uploads/avatars/' . $user_foto)): ?>
+                    <img src="../uploads/avatars/<?= htmlspecialchars($user_foto) ?>" alt="<?= $user_nama ?>">
+                <?php else: ?>
+                    <?= $initials ?>
+                <?php endif; ?>
+            </div>
+            <div class="user-meta-text">
+                <span class="user-greeting-label">Akun Saya,</span>
+                <span class="user-name-label"><?= $user_nama ?></span>
+            </div>
+            <span class="role-badge-pill <?= $role_badge_class ?>">
+                <?= $role_icon ?> <?= $role_title ?>
+            </span>
+        </a>
+
+        <a href="../profile.php" class="nav-btn btn-nav-secondary">
+            <span>👤 Profil Saya</span>
+        </a>
+
+        <a href="../index.php" class="nav-btn btn-nav-secondary">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>Kembali ke Galeri</span>
+        </a>
+
+        <a href="../auth/logout.php" class="nav-btn btn-nav-danger">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            <span>Logout Akun</span>
+        </a>
     </div>
 </nav>
+
 
 <div style="max-width: 1000px; margin: 30px auto; padding: 0 20px;">
     <?php if (!empty($error)): ?>
@@ -165,5 +293,6 @@ $users = $pdo->query("SELECT * FROM users ORDER BY role ASC, id ASC")->fetchAll(
     </div>
 </div>
 
+<script src="../assets/js/navbar.js"></script>
 </body>
 </html>
