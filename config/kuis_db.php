@@ -1,5 +1,5 @@
 <?php
-$host = 'sql112.epizy.com';
+$host = 'localhost';
 $db   = 'if0_43361726_db_etalase_stella';
 $user = 'if0_43361726';
 $pass = 'EZgIgF2gShM6CV';
