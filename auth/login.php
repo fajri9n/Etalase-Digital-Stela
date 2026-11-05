@@ -45,6 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    <meta name="google-site-verification" content="qiovdyaGfbvdynF4aamd-JXm0NszbltuhLnDOT2rfzE" />
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Stella Etalase Digital</title>
