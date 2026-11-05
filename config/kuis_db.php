@@ -1,6 +1,6 @@
 <?php
-$host = 'sql112.infinityfree.com    ';
-$db   = 'f0_43361726_db_etalase_stella ';
+$host = 'sql112.epizy.com';
+$db   = 'if0_43361726_db_etalase_stella';
 $user = 'if0_43361726';
 $pass = 'EZgIgF2gShM6CV';
 
@@ -13,3 +13,4 @@ try {
 } catch (PDOException $e) {
     die("Koneksi database gagal: " . $e->getMessage());
 }
+?>
