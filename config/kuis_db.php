@@ -1,8 +1,8 @@
 <?php
-$host = 'localhost';
-$db   = 'db_etalase_stella';
-$user = 'root';
-$pass = '';
+$host = 'sql112.infinityfree.com    ';
+$db   = 'f0_43361726_db_etalase_stella ';
+$user = 'if0_43361726';
+$pass = 'EZgIgF2gShM6CV';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass, [
