@@ -14,12 +14,44 @@ if (!$user) {
     exit();
 }
 
-// Ambil semua karya beserta nama & foto pembuat
-$stmt = $pdo->query("SELECT projects.*, users.nama AS pembuat, users.foto AS pembuat_foto 
-                     FROM projects 
-                     JOIN users ON projects.user_id = users.id 
-                     ORDER BY projects.created_at DESC");
-$projects = $stmt->fetchAll();
+$current_user_id = (int) ($user['id'] ?? 0);
+
+// Ambil semua karya beserta nama, foto pembuat, total like, dan status like user
+try {
+    $stmt = $pdo->prepare("
+        SELECT 
+            projects.*, 
+            users.nama AS pembuat, 
+            users.foto AS pembuat_foto,
+            COALESCE(likes_count.total_likes, 0) AS total_likes,
+            CASE WHEN user_like.id IS NOT NULL THEN 1 ELSE 0 END AS is_liked
+        FROM projects 
+        JOIN users ON projects.user_id = users.id 
+        LEFT JOIN (
+            SELECT project_id, COUNT(*) AS total_likes 
+            FROM project_likes 
+            GROUP BY project_id
+        ) AS likes_count ON projects.id = likes_count.project_id
+        LEFT JOIN project_likes AS user_like ON projects.id = user_like.project_id AND user_like.user_id = :uid
+        ORDER BY projects.created_at DESC
+    ");
+    $stmt->execute([':uid' => $current_user_id]);
+    $projects = $stmt->fetchAll();
+} catch (PDOException $e) {
+    // Fallback aman jika query join gagal
+    $stmt = $pdo->query("SELECT projects.*, users.nama AS pembuat, users.foto AS pembuat_foto, 0 AS total_likes, 0 AS is_liked 
+                         FROM projects 
+                         JOIN users ON projects.user_id = users.id 
+                         ORDER BY projects.created_at DESC");
+    $projects = $stmt->fetchAll();
+}
+
+// Hitung total karya per kategori untuk counter tab
+$category_counts = ['all' => count($projects)];
+foreach ($projects as $pr) {
+    $c_name = $pr['kategori'] ?? 'Web Design';
+    $category_counts[$c_name] = ($category_counts[$c_name] ?? 0) + 1;
+}
 
 // Data User untuk Navbar Modern
 $user_nama = htmlspecialchars($user['nama'] ?? 'User');
@@ -240,6 +272,30 @@ if (isset($_GET['success'])) {
         </div>
     </div>
 
+    <!-- Category Filter Tabs Navigation -->
+    <div class="category-filter-bar">
+        <div class="category-filter-scroll">
+            <button type="button" class="category-tab active" data-category="all" onclick="filterByCategory('all')">
+                <span class="cat-tab-icon">🔥</span>
+                <span class="cat-tab-label">Semua</span>
+                <span class="cat-tab-count" id="countAll"><?= count($projects) ?></span>
+            </button>
+            <?php 
+            $all_categories = get_project_categories();
+            foreach ($all_categories as $kat_name => $kat_meta): 
+                $count_kat = $category_counts[$kat_name] ?? 0;
+            ?>
+                <button type="button" class="category-tab" data-category="<?= htmlspecialchars($kat_name) ?>" onclick="filterByCategory('<?= htmlspecialchars($kat_name) ?>')">
+                    <span class="cat-tab-icon"><?= $kat_meta['icon'] ?></span>
+                    <span class="cat-tab-label"><?= htmlspecialchars($kat_name) ?></span>
+                    <?php if ($count_kat > 0): ?>
+                        <span class="cat-tab-count"><?= $count_kat ?></span>
+                    <?php endif; ?>
+                </button>
+            <?php endforeach; ?>
+        </div>
+    </div>
+
     <?php if (empty($projects)): ?>
         <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(14px); padding: 70px 24px; text-align: center; border-radius: 22px; box-shadow: 0 15px 40px rgba(0,0,0,0.25);">
             <div style="font-size: 52px; margin-bottom: 14px;">🎨</div>
@@ -255,10 +311,17 @@ if (isset($_GET['success'])) {
         <div class="grid-projects" id="projectsGrid">
             <?php foreach($projects as $p): 
                 $author_initial = strtoupper(mb_substr(trim($p['pembuat']), 0, 1));
-                $author_foto = $p['pembuat_foto'] ?? null;
+                $author_foto    = $p['pembuat_foto'] ?? null;
+                $project_kat    = $p['kategori'] ?? 'Web Design';
+                $kat_info       = get_category_info($project_kat);
+                $is_liked       = !empty($p['is_liked']);
+                $total_likes    = (int) ($p['total_likes'] ?? 0);
             ?>
                 <div class="card-project"
+                     data-project-id="<?= $p['id'] ?>"
                      data-project-title="<?= htmlspecialchars($p['nama_project'], ENT_QUOTES) ?>"
+                     data-project-category="<?= htmlspecialchars($project_kat, ENT_QUOTES) ?>"
+                     data-project-category-icon="<?= htmlspecialchars($kat_info['icon'], ENT_QUOTES) ?>"
                      data-project-author="<?= htmlspecialchars($p['pembuat'], ENT_QUOTES) ?>"
                      data-project-author-photo="<?= !empty($author_foto) ? 'uploads/avatars/' . htmlspecialchars($author_foto, ENT_QUOTES) : '' ?>"
                      data-project-author-initial="<?= $author_initial ?>"
@@ -266,8 +329,11 @@ if (isset($_GET['success'])) {
                      data-project-image="uploads/<?= htmlspecialchars($p['gambar'], ENT_QUOTES) ?>"
                      data-project-description="<?= htmlspecialchars($p['deskripsi'], ENT_QUOTES) ?>"
                      data-project-link="<?= htmlspecialchars($p['link_project'], ENT_QUOTES) ?>"
+                     data-project-likes="<?= $total_likes ?>"
+                     data-project-is-liked="<?= $is_liked ? '1' : '0' ?>"
                      data-title="<?= strtolower(htmlspecialchars($p['nama_project'])) ?>"
                      data-author="<?= strtolower(htmlspecialchars($p['pembuat'])) ?>"
+                     data-category="<?= strtolower(htmlspecialchars($project_kat)) ?>"
                      data-desc="<?= strtolower(htmlspecialchars($p['deskripsi'])) ?>">
                     
                     <!-- Cover Image -->
@@ -276,6 +342,14 @@ if (isset($_GET['success'])) {
                              alt="<?= htmlspecialchars($p['nama_project']) ?>" 
                              class="card-img-top" 
                              onerror="this.onerror=null; this.src='assets/default_project.svg';">
+
+                        <!-- Badge Kategori Floating -->
+                        <span class="card-floating-category <?= $kat_info['class'] ?>" title="Kategori: <?= htmlspecialchars($project_kat) ?>">
+                            <span class="cat-pill-icon"><?= $kat_info['icon'] ?></span>
+                            <span><?= htmlspecialchars($project_kat) ?></span>
+                        </span>
+
+                        <!-- Date Pill Floating -->
                         <span class="card-floating-date">
                             📅 <?= date('d M Y', strtotime($p['created_at'])) ?>
                         </span>
@@ -306,26 +380,42 @@ if (isset($_GET['success'])) {
                         
                         <!-- Card Footer Links & Actions -->
                         <div class="card-footer-row" onclick="event.stopPropagation();">
-                            <a href="<?= htmlspecialchars($p['link_project']) ?>" target="_blank" rel="noopener noreferrer" class="card-link-btn">
-                                <span>Kunjungi Web</span>
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="7" y1="17" x2="17" y2="7"></line>
-                                    <polyline points="7 7 17 7 17 17"></polyline>
-                                </svg>
-                            </a>
-                            
-                            <!-- Hak Akses Edit/Hapus: Owner / Admin / Super Admin -->
-                            <?php if($_SESSION['role'] === 'super_admin' || $_SESSION['role'] === 'admin' || $_SESSION['user_id'] == $p['user_id']): ?>
-                                <div class="card-actions-group">
-                                    <a href="project_edit.php?id=<?= $p['id'] ?>" class="btn-card-edit" title="Edit Karya">
-                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
-                                        Edit
-                                    </a>
-                                    <a href="project_hapus.php?id=<?= $p['id'] ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus karya ini?')" class="btn-card-delete" title="Hapus Karya">
-                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                                    </a>
-                                </div>
-                            <?php endif; ?>
+                            <div class="card-footer-left">
+                                <a href="<?= htmlspecialchars($p['link_project']) ?>" target="_blank" rel="noopener noreferrer" class="card-link-btn">
+                                    <span>Kunjungi Web</span>
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="7" y1="17" x2="17" y2="7"></line>
+                                        <polyline points="7 7 17 7 17 17"></polyline>
+                                    </svg>
+                                </a>
+                            </div>
+
+                            <div class="card-footer-right">
+                                <!-- Tombol Like Interaktif -->
+                                <button type="button" 
+                                        class="btn-card-like <?= $is_liked ? 'liked' : '' ?>" 
+                                        data-project-id="<?= $p['id'] ?>"
+                                        title="<?= $is_liked ? 'Batal Suka' : 'Sukai Karya Ini' ?>"
+                                        onclick="handleLikeClick(event, <?= $p['id'] ?>)">
+                                    <svg class="heart-icon" viewBox="0 0 24 24" width="16" height="16" fill="<?= $is_liked ? '#ef4444' : 'none' ?>" stroke="<?= $is_liked ? '#ef4444' : 'currentColor' ?>" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                    </svg>
+                                    <span class="like-counter"><?= $total_likes ?></span>
+                                </button>
+
+                                <!-- Hak Akses Edit/Hapus: Owner / Admin / Super Admin -->
+                                <?php if($_SESSION['role'] === 'super_admin' || $_SESSION['role'] === 'admin' || $_SESSION['user_id'] == $p['user_id']): ?>
+                                    <div class="card-actions-group">
+                                        <a href="project_edit.php?id=<?= $p['id'] ?>" class="btn-card-edit" title="Edit Karya">
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                                            Edit
+                                        </a>
+                                        <a href="project_hapus.php?id=<?= $p['id'] ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus karya ini?')" class="btn-card-delete" title="Hapus Karya">
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -335,7 +425,7 @@ if (isset($_GET['success'])) {
         <div id="noResultsMessage" style="display: none; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(14px); padding: 45px; text-align: center; border-radius: 20px; margin-top: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
             <div style="font-size: 38px; margin-bottom: 8px;">🔍</div>
             <h3 style="font-size: 17px; font-weight: 700; color: #0f172a; margin-bottom: 4px;">Karya Tidak Ditemukan</h3>
-            <p style="color: #64748b; font-size: 13.5px; margin: 0;">Tidak ada karya yang cocok dengan kata kunci pencarian Anda. Coba kata kunci lainnya.</p>
+            <p style="color: #64748b; font-size: 13.5px; margin: 0;">Tidak ada karya yang cocok dengan filter atau kata kunci pencarian Anda. Coba pilih kategori lain atau ubah kata kunci.</p>
         </div>
     <?php endif; ?>
 </main>
@@ -364,6 +454,9 @@ if (isset($_GET['success'])) {
                     👤 Pembuat: <b id="modalProjectAuthor">Pembuat</b>
                 </span>
                 <span>
+                    🏷️ Kategori: <b id="modalProjectCategory">Kategori</b>
+                </span>
+                <span>
                     📅 Rilis: <b id="modalProjectDate">Tanggal</b>
                 </span>
             </div>
@@ -372,13 +465,22 @@ if (isset($_GET['success'])) {
 
             <p id="modalProjectDescription">Deskripsi project.</p>
 
-            <a id="modalProjectLink" href="#" target="_blank" rel="noopener noreferrer" class="modal-project-button">
-                <span>Buka Demo / Link Karya</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="7" y1="17" x2="17" y2="7"></line>
-                    <polyline points="7 7 17 7 17 17"></polyline>
-                </svg>
-            </a>
+            <div class="modal-actions-row">
+                <a id="modalProjectLink" href="#" target="_blank" rel="noopener noreferrer" class="modal-project-button">
+                    <span>Buka Demo / Link Karya</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="7" y1="17" x2="17" y2="7"></line>
+                        <polyline points="7 7 17 7 17 17"></polyline>
+                    </svg>
+                </a>
+
+                <button type="button" class="modal-like-btn" id="modalLikeButton" onclick="handleModalLike()">
+                    <svg class="heart-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                    </svg>
+                    <span id="modalLikeCountText">0 Suka</span>
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -390,10 +492,13 @@ if (isset($_GET['success'])) {
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
-    /* Search & Filter */
-    window.filterProjects = function () {
+    let activeCategory = 'all';
+    let currentModalProjectId = null;
+
+    /* Combined Search & Category Filter */
+    window.applyFilters = function () {
         const input = document.getElementById("searchInput");
-        const filter = input.value.toLowerCase().trim();
+        const filter = input ? input.value.toLowerCase().trim() : "";
         const cards = document.querySelectorAll("#projectsGrid .card-project");
         const countBadge = document.getElementById("projectCount");
         const noResults = document.getElementById("noResultsMessage");
@@ -403,8 +508,12 @@ document.addEventListener("DOMContentLoaded", function () {
             const title = card.getAttribute("data-title") || "";
             const author = card.getAttribute("data-author") || "";
             const desc = card.getAttribute("data-desc") || "";
+            const category = card.getAttribute("data-category") || "";
 
-            if (title.includes(filter) || author.includes(filter) || desc.includes(filter)) {
+            const matchSearch = (!filter) || title.includes(filter) || author.includes(filter) || desc.includes(filter);
+            const matchCategory = (activeCategory === 'all') || (category === activeCategory.toLowerCase());
+
+            if (matchSearch && matchCategory) {
                 card.style.display = "flex";
                 visibleCount++;
             } else {
@@ -418,6 +527,128 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
+    window.filterProjects = function () {
+        window.applyFilters();
+    };
+
+    window.filterByCategory = function (category) {
+        activeCategory = category;
+
+        // Update tab active styles
+        document.querySelectorAll(".category-tab").forEach(tab => {
+            if (tab.getAttribute("data-category") === category) {
+                tab.classList.add("active");
+            } else {
+                tab.classList.remove("active");
+            }
+        });
+
+        window.applyFilters();
+    };
+
+    /* Interactive Like System */
+    window.handleLikeClick = async function (event, projectId) {
+        if (event) {
+            event.stopPropagation();
+            event.preventDefault();
+        }
+
+        const btn = document.querySelector(`.btn-card-like[data-project-id="${projectId}"]`);
+        if (btn) btn.disabled = true;
+
+        try {
+            const formData = new FormData();
+            formData.append('project_id', projectId);
+
+            const res = await fetch('project_like.php', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                updateLikeUI(projectId, data.is_liked, data.total_likes);
+            } else {
+                alert(data.message || 'Gagal mengubah status like.');
+            }
+        } catch (err) {
+            console.error('Error saat proses like:', err);
+        } finally {
+            if (btn) btn.disabled = false;
+        }
+    };
+
+    window.handleModalLike = function () {
+        if (currentModalProjectId) {
+            window.handleLikeClick(null, currentModalProjectId);
+        }
+    };
+
+    function updateLikeUI(projectId, isLiked, totalLikes) {
+        // Update Card
+        const card = document.querySelector(`.card-project[data-project-id="${projectId}"]`);
+        if (card) {
+            card.setAttribute('data-project-likes', totalLikes);
+            card.setAttribute('data-project-is-liked', isLiked ? '1' : '0');
+        }
+
+        const cardBtn = document.querySelector(`.btn-card-like[data-project-id="${projectId}"]`);
+        if (cardBtn) {
+            const heart = cardBtn.querySelector('.heart-icon');
+            const counter = cardBtn.querySelector('.like-counter');
+
+            if (isLiked) {
+                cardBtn.classList.add('liked');
+                cardBtn.title = 'Batal Suka';
+                if (heart) {
+                    heart.setAttribute('fill', '#ef4444');
+                    heart.setAttribute('stroke', '#ef4444');
+                }
+                cardBtn.classList.add('heart-pulse');
+                setTimeout(() => cardBtn.classList.remove('heart-pulse'), 400);
+            } else {
+                cardBtn.classList.remove('liked');
+                cardBtn.title = 'Sukai Karya Ini';
+                if (heart) {
+                    heart.setAttribute('fill', 'none');
+                    heart.setAttribute('stroke', 'currentColor');
+                }
+            }
+
+            if (counter) counter.textContent = totalLikes;
+        }
+
+        // Update Modal jika sedang dibuka untuk project yang sama
+        if (currentModalProjectId == projectId) {
+            const modalBtn = document.getElementById("modalLikeButton");
+            const modalText = document.getElementById("modalLikeCountText");
+            if (modalBtn) {
+                const modalHeart = modalBtn.querySelector('.heart-icon');
+                if (isLiked) {
+                    modalBtn.classList.add('liked');
+                    if (modalHeart) {
+                        modalHeart.setAttribute('fill', '#ef4444');
+                        modalHeart.setAttribute('stroke', '#ef4444');
+                    }
+                    modalBtn.classList.add('heart-pulse');
+                    setTimeout(() => modalBtn.classList.remove('heart-pulse'), 400);
+                } else {
+                    modalBtn.classList.remove('liked');
+                    if (modalHeart) {
+                        modalHeart.setAttribute('fill', 'none');
+                        modalHeart.setAttribute('stroke', 'currentColor');
+                    }
+                }
+            }
+            if (modalText) {
+                modalText.textContent = totalLikes + ' Suka';
+            }
+        }
+    }
+
     /* Modal Controller */
     const modal = document.getElementById("projectModal");
     const overlay = document.getElementById("projectModalOverlay");
@@ -425,17 +656,52 @@ document.addEventListener("DOMContentLoaded", function () {
     const modalImage = document.getElementById("modalProjectImage");
     const modalTitle = document.getElementById("modalProjectTitle");
     const modalAuthor = document.getElementById("modalProjectAuthor");
+    const modalCategory = document.getElementById("modalProjectCategory");
     const modalDate = document.getElementById("modalProjectDate");
     const modalDesc = document.getElementById("modalProjectDescription");
     const modalLink = document.getElementById("modalProjectLink");
+    const modalLikeBtn = document.getElementById("modalLikeButton");
+    const modalLikeText = document.getElementById("modalLikeCountText");
 
     function openModal(card) {
+        currentModalProjectId = card.getAttribute("data-project-id");
+
         modalImage.src = card.getAttribute("data-project-image");
         modalTitle.textContent = card.getAttribute("data-project-title");
         modalAuthor.textContent = card.getAttribute("data-project-author");
+        
+        const catName = card.getAttribute("data-project-category") || "Web Design";
+        const catIcon = card.getAttribute("data-project-category-icon") || "🎨";
+        if (modalCategory) {
+            modalCategory.textContent = catIcon + " " + catName;
+        }
+
         modalDate.textContent = card.getAttribute("data-project-date");
         modalDesc.textContent = card.getAttribute("data-project-description");
         modalLink.href = card.getAttribute("data-project-link");
+
+        const isLiked = card.getAttribute("data-project-is-liked") === "1";
+        const totalLikes = parseInt(card.getAttribute("data-project-likes") || "0");
+
+        if (modalLikeBtn) {
+            const modalHeart = modalLikeBtn.querySelector('.heart-icon');
+            if (isLiked) {
+                modalLikeBtn.classList.add('liked');
+                if (modalHeart) {
+                    modalHeart.setAttribute('fill', '#ef4444');
+                    modalHeart.setAttribute('stroke', '#ef4444');
+                }
+            } else {
+                modalLikeBtn.classList.remove('liked');
+                if (modalHeart) {
+                    modalHeart.setAttribute('fill', 'none');
+                    modalHeart.setAttribute('stroke', 'currentColor');
+                }
+            }
+        }
+        if (modalLikeText) {
+            modalLikeText.textContent = totalLikes + ' Suka';
+        }
 
         modal.classList.add("active");
         document.body.style.overflow = "hidden";
@@ -444,9 +710,10 @@ document.addEventListener("DOMContentLoaded", function () {
     function closeModal() {
         modal.classList.remove("active");
         document.body.style.overflow = "";
+        currentModalProjectId = null;
     }
 
-    // Attach click events to cards
+    // Pasang click events ke setiap card project
     document.querySelectorAll(".card-project").forEach(card => {
         card.addEventListener("click", function (e) {
             if (e.target.closest("a") || e.target.closest("button")) {

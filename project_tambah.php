@@ -279,6 +279,35 @@ if ($user_role === 'super_admin') {
                 </div>
             </div>
 
+            <!-- Kategori Karya -->
+            <div class="form-group">
+                <div class="form-group-label">
+                    <label for="kategori">Kategori Karya</label>
+                    <span class="label-hint">Pilih bidang karya</span>
+                </div>
+                <div class="form-input-wrapper">
+                    <span class="input-leading-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                    </span>
+                    <select id="kategori" name="kategori" class="form-select" required>
+                        <?php 
+                        $daftar_kategori = get_project_categories();
+                        $selected_kat = $_POST['kategori'] ?? 'Web Design';
+                        foreach ($daftar_kategori as $kat_name => $kat_meta): 
+                        ?>
+                            <option value="<?= htmlspecialchars($kat_name) ?>" <?= ($selected_kat === $kat_name) ? 'selected' : '' ?>>
+                                <?= $kat_meta['icon'] ?> <?= htmlspecialchars($kat_name) ?> — <?= htmlspecialchars($kat_meta['desc']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+
             <!-- Tautan / Link Karya -->
             <div class="form-group">
                 <div class="form-group-label">

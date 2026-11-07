@@ -126,10 +126,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     }
 }
 
-// Ambil semua proyek yang dibuat oleh user ini
-$stmtProjects = $pdo->prepare("SELECT * FROM projects WHERE user_id = :uid ORDER BY created_at DESC");
-$stmtProjects->execute([':uid' => $user['id']]);
-$myProjects = $stmtProjects->fetchAll();
+// Ambil semua proyek yang dibuat oleh user ini beserta total like
+try {
+    $stmtProjects = $pdo->prepare("
+        SELECT 
+            projects.*, 
+            COALESCE(likes_count.total_likes, 0) AS total_likes 
+        FROM projects 
+        LEFT JOIN (
+            SELECT project_id, COUNT(*) AS total_likes 
+            FROM project_likes 
+            GROUP BY project_id
+        ) AS likes_count ON projects.id = likes_count.project_id
+        WHERE projects.user_id = :uid 
+        ORDER BY projects.created_at DESC
+    ");
+    $stmtProjects->execute([':uid' => $user['id']]);
+    $myProjects = $stmtProjects->fetchAll();
+} catch (PDOException $e) {
+    $stmtProjects = $pdo->prepare("SELECT *, 0 AS total_likes FROM projects WHERE user_id = :uid ORDER BY created_at DESC");
+    $stmtProjects->execute([':uid' => $user['id']]);
+    $myProjects = $stmtProjects->fetchAll();
+}
 $totalMyProjects = count($myProjects);
 
 // Data Inisial & Role
@@ -561,6 +579,18 @@ if ($user_role === 'super_admin') {
                             <img src="uploads/<?= htmlspecialchars($proj['gambar']) ?>" alt="<?= htmlspecialchars($proj['nama_project']) ?>" onerror="this.onerror=null; this.src='assets/default_project.svg';">
                         </div>
                         <div class="user-project-body">
+                            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; font-size: 11.5px;">
+                                <?php 
+                                $p_kat = $proj['kategori'] ?? 'Web Design';
+                                $p_info = get_category_info($p_kat);
+                                ?>
+                                <span style="font-weight: 700; color: #2563eb; background: #eff6ff; padding: 2px 8px; border-radius: 6px;">
+                                    <?= $p_info['icon'] ?> <?= htmlspecialchars($p_kat) ?>
+                                </span>
+                                <span style="display: inline-flex; align-items: center; gap: 4px; font-weight: 700; color: #dc2626;">
+                                    ❤️ <?= (int) ($proj['total_likes'] ?? 0) ?> Suka
+                                </span>
+                            </div>
                             <h3 class="user-project-title"><?= htmlspecialchars($proj['nama_project']) ?></h3>
                             <span class="user-project-date">📅 <?= date('d M Y', strtotime($proj['created_at'])) ?></span>
                             

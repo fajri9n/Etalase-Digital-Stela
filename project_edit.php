@@ -37,9 +37,16 @@ $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama_project = trim($_POST['nama_project'] ?? '');
+    $kategori     = trim($_POST['kategori'] ?? ($project['kategori'] ?? 'Web Design'));
     $deskripsi    = trim($_POST['deskripsi'] ?? '');
     $link_project = trim($_POST['link_project'] ?? '');
     $gambar_nama  = $project['gambar'];
+
+    // Validasi daftar kategori
+    $valid_categories = array_keys(get_project_categories());
+    if (!in_array($kategori, $valid_categories)) {
+        $kategori = $project['kategori'] ?? 'Web Design';
+    }
 
     if (empty($nama_project) || empty($deskripsi) || empty($link_project)) {
         $error = "Semua bidang teks wajib diisi!";
@@ -70,9 +77,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (empty($error)) {
             try {
-                $stmt = $pdo->prepare("UPDATE projects SET nama_project = :nama, deskripsi = :desk, gambar = :img, link_project = :link WHERE id = :id");
+                $stmt = $pdo->prepare("UPDATE projects SET nama_project = :nama, kategori = :kat, deskripsi = :desk, gambar = :img, link_project = :link WHERE id = :id");
                 $stmt->execute([
                     ':nama' => $nama_project,
+                    ':kat'  => $kategori,
                     ':desk' => $deskripsi,
                     ':img'  => $gambar_nama,
                     ':link' => $link_project,
@@ -292,6 +300,35 @@ if ($user_role === 'super_admin') {
                         required 
                         autofocus
                     >
+                </div>
+            </div>
+
+            <!-- Kategori Karya -->
+            <div class="form-group">
+                <div class="form-group-label">
+                    <label for="kategori">Kategori Karya</label>
+                    <span class="label-hint">Pilih bidang karya</span>
+                </div>
+                <div class="form-input-wrapper">
+                    <span class="input-leading-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                    </span>
+                    <select id="kategori" name="kategori" class="form-select" required>
+                        <?php 
+                        $daftar_kategori = get_project_categories();
+                        $current_kat = $project['kategori'] ?? 'Web Design';
+                        foreach ($daftar_kategori as $kat_name => $kat_meta): 
+                        ?>
+                            <option value="<?= htmlspecialchars($kat_name) ?>" <?= ($current_kat === $kat_name) ? 'selected' : '' ?>>
+                                <?= $kat_meta['icon'] ?> <?= htmlspecialchars($kat_name) ?> — <?= htmlspecialchars($kat_meta['desc']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
             </div>
 
