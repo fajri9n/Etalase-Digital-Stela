@@ -1,42 +1,58 @@
 <!-- ==========================================================
-     FLOATING CHATBOT WIDGET (NON-AI ASSISTANT)
+     FLOATING CHATBOT BUBBLE WIDGET
      ========================================================== -->
 <div class="chatbot-wrapper" id="chatbotWrapper">
     <!-- Chat Window Box -->
     <div class="chatbot-window" id="chatbotWindow">
         <!-- Header -->
         <div class="chatbot-header">
-            <div class="chatbot-header-left">
+            <div class="chatbot-header-info">
                 <div class="chatbot-avatar">🤖</div>
-                <div class="chatbot-title-box">
-                    <h4>Stella Assistant <span class="chatbot-badge-beta">PANDUAN</span></h4>
-                    <p class="chatbot-subtext"><span class="dot-online"></span> Siap Membantu • Online</p>
+                <div class="chatbot-header-text">
+                    <span class="chatbot-name">Stella Assistant</span>
+                    <span class="chatbot-status"><span class="status-dot"></span> Online</span>
                 </div>
             </div>
-            <button type="button" class="chatbot-close-btn" id="chatbotCloseBtn" aria-label="Tutup Obrolan">&times;</button>
+            <button type="button" class="chatbot-close-btn" id="chatbotCloseBtn" title="Tutup Chat" aria-label="Tutup Obrolan">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
         </div>
 
-        <!-- Messages Area -->
+        <!-- Chat Conversation Body -->
         <div class="chatbot-body" id="chatbotBody">
-            <div class="chat-msg bot">
-                <div class="chat-bubble">
-                    Halo! 👋 Selamat datang di <b>Stella Etalase Digital</b>.<br>
-                    Ada yang bisa saya bantu terkait karya inovasi siswa atau informasi sekolah?
-                    <div class="chatbot-quick-chips">
-                        <button type="button" class="quick-chip" data-question="Cara unggah karya">💡 Cara Unggah</button>
-                        <button type="button" class="quick-chip" data-question="Kategori karya apa saja?">🎨 Kategori</button>
-                        <button type="button" class="quick-chip" data-question="Bagaimana cara memberi like?">❤️ Cara Like</button>
-                        <button type="button" class="quick-chip" data-question="Tentang Stella Etalase">🏫 Info Sekolah</button>
+            <!-- Bot Initial Message Bubble -->
+            <div class="chat-row bot">
+                <div class="msg-avatar">🤖</div>
+                <div class="msg-content">
+                    <div class="msg-bubble">
+                        Halo! 👋 Selamat datang di <b>Stella Etalase Digital</b>.<br>
+                        Ada yang bisa saya bantu seputar karya siswa atau informasi etalase?
                     </div>
+                    <span class="msg-time" id="initialBotTime">Baru saja</span>
+                </div>
+            </div>
+
+            <!-- Quick FAQ Options -->
+            <div class="chatbot-quick-options" id="chatbotQuickOptions">
+                <div class="quick-options-label">Pilih bantuan cepat:</div>
+                <div class="quick-options-grid">
+                    <button type="button" class="faq-chip" data-question="Cara unggah karya">💡 Cara Unggah Karya</button>
+                    <button type="button" class="faq-chip" data-question="Kategori karya apa saja?">🎨 Kategori Karya</button>
+                    <button type="button" class="faq-chip" data-question="Bagaimana cara memberi like?">❤️ Cara Memberi Like</button>
+                    <button type="button" class="faq-chip" data-question="Tentang SMK Stella Maris">🏫 Info Sekolah</button>
+                    <button type="button" class="faq-chip" data-question="Hubungi Admin">🛡️ Hubungi Admin</button>
                 </div>
             </div>
         </div>
 
-        <!-- Input Footer -->
+        <!-- Chat Input Footer -->
         <form class="chatbot-footer" id="chatbotForm" autocomplete="off">
-            <input type="text" id="chatbotInput" class="chatbot-input" placeholder="Tanyakan sesuatu di sini..." autocomplete="off">
-            <button type="submit" class="chatbot-send-btn" aria-label="Kirim Pesan">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <input type="text" id="chatbotInput" class="chatbot-input" placeholder="Ketik pesan di sini..." autocomplete="off">
+            <button type="submit" class="chatbot-send-btn" title="Kirim Pesan" aria-label="Kirim Pesan">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="22" y1="2" x2="11" y2="13"></line>
                     <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
                 </svg>
@@ -44,23 +60,15 @@
         </form>
     </div>
 
-    <!-- Floating Launcher Controls (Pill + Button) -->
-    <div class="chatbot-launcher-row">
-        <div class="chatbot-teaser-pill" onclick="document.getElementById('chatbotToggleBtn').click()">
-            <span class="teaser-dot"></span>
-            <span>💬 Butuh Bantuan? Tanya Stella!</span>
-        </div>
-
-        <!-- Floating Toggle Button -->
-        <button type="button" class="chatbot-toggle-btn" id="chatbotToggleBtn" aria-label="Buka Chat Bantuan">
-            <span class="chatbot-status-pulse"></span>
-            <svg class="icon-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            </svg>
-            <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-        </button>
-    </div>
+    <!-- Floating Chat Bubble Launcher Button -->
+    <button type="button" class="chatbot-bubble-btn" id="chatbotToggleBtn" title="Buka Asisten Stella" aria-label="Buka Chatbot">
+        <span class="bubble-online-pulse"></span>
+        <svg class="icon-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+        <svg class="icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+    </button>
 </div>
