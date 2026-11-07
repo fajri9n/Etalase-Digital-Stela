@@ -476,6 +476,23 @@
 }
 
 /* Responsiveness */
+@media (max-width: 1280px) {
+    .navbar-menu-group {
+        gap: 8px;
+    }
+    .nav-btn {
+        padding: 8px 12px;
+        font-size: 12px;
+        gap: 5px;
+    }
+    .navbar-user-capsule {
+        padding: 4px 10px 4px 6px;
+    }
+    .user-greeting-label {
+        display: none;
+    }
+}
+
 @media (max-width: 992px) {
     .navbar {
         padding: 12px 20px !important;

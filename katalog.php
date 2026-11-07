@@ -52,7 +52,7 @@ foreach ($projects as $pr) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Etalase Digital SMK Stella Maris - Panggung Karya & Inovasi Siswa</title>
+    <title>Etalase Digital SMK Telkom Lampung - Panggung Karya & Inovasi Siswa</title>
     <!-- Google Fonts Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -182,8 +182,18 @@ foreach ($projects as $pr) {
         </div>
     </div>
 
-    <!-- Category Filter Tabs Navigation -->
+    <!-- Category Filter Bar Container -->
     <div class="category-filter-bar">
+        <div class="category-filter-header">
+            <div class="category-header-title">
+                <span class="cat-dot"></span>
+                <span>KATEGORI KARYA DIGITAL</span>
+                <span class="category-header-desc">• Pilih bidang untuk menyaring inovasi</span>
+            </div>
+            <div style="font-size: 11.5px; color: #94a3b8; font-weight: 600;">
+                Geser untuk kategori lainnya &rarr;
+            </div>
+        </div>
         <div class="category-filter-scroll">
             <button type="button" class="category-tab active" data-category="all" onclick="filterByCategory('all')">
                 <span class="cat-tab-icon">🔥</span>
@@ -222,7 +232,7 @@ foreach ($projects as $pr) {
             <?php foreach($projects as $p): 
                 $author_initial = strtoupper(mb_substr(trim($p['pembuat']), 0, 1));
                 $author_foto    = $p['pembuat_foto'] ?? null;
-                $project_kat    = $p['kategori'] ?? 'Web Design';
+                $project_kat    = (!empty($p['kategori'])) ? $p['kategori'] : 'Web Design';
                 $kat_info       = get_category_info($project_kat);
                 $is_liked       = !empty($p['is_liked']);
                 $total_likes    = (int) ($p['total_likes'] ?? 0);
@@ -266,20 +276,26 @@ foreach ($projects as $pr) {
                     </div>
                     
                     <div class="card-body">
-                        <!-- Author Meta with Photo -->
-                        <div class="card-author-row">
-                            <div class="author-mini-avatar">
-                                <?php if (!empty($author_foto) && file_exists('uploads/avatars/' . $author_foto)): ?>
-                                    <img src="uploads/avatars/<?= htmlspecialchars($author_foto) ?>" alt="<?= htmlspecialchars($p['pembuat']) ?>">
-                                <?php else: ?>
-                                    <div style="background: linear-gradient(135deg, #0f172a 0%, #334155 100%); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
-                                        <?= $author_initial ?>
-                                    </div>
-                                <?php endif; ?>
+                        <!-- Author Meta with Photo & Category -->
+                        <div class="card-author-row" style="justify-content: space-between;">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div class="author-mini-avatar">
+                                    <?php if (!empty($author_foto) && file_exists('uploads/avatars/' . $author_foto)): ?>
+                                        <img src="uploads/avatars/<?= htmlspecialchars($author_foto) ?>" alt="<?= htmlspecialchars($p['pembuat']) ?>">
+                                    <?php else: ?>
+                                        <div style="background: linear-gradient(135deg, #0f172a 0%, #334155 100%); width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;">
+                                            <?= $author_initial ?>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="author-name-text">
+                                    Oleh: <b><?= htmlspecialchars($p['pembuat']) ?></b>
+                                </div>
                             </div>
-                            <div class="author-name-text">
-                                Oleh: <b><?= htmlspecialchars($p['pembuat']) ?></b>
-                            </div>
+
+                            <span class="card-badge-inline <?= $kat_info['class'] ?>" style="padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 700; white-space: nowrap;">
+                                <?= $kat_info['icon'] ?> <?= htmlspecialchars($project_kat) ?>
+                            </span>
                         </div>
 
                         <!-- Project Title -->
