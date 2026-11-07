@@ -97,6 +97,7 @@ if (isset($_GET['success'])) {
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/navbar.css">
     <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/chatbot.css">
 </head>
 <body>
 
@@ -141,6 +142,15 @@ if (isset($_GET['success'])) {
         </a>
 
         <!-- Action Buttons -->
+        <a href="katalog.php" class="nav-btn btn-nav-secondary" title="Lihat Tampilan Mode Pengunjung Publik">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+            </svg>
+            <span>Mode Publik</span>
+        </a>
+
         <a href="profile.php" class="nav-btn btn-nav-secondary" title="Kelola Profil & Foto">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -157,15 +167,15 @@ if (isset($_GET['success'])) {
             <span>+ Tambah Karya</span>
         </a>
 
-        <?php if ($_SESSION['role'] === 'super_admin'): ?>
-            <a href="admin/users.php" class="nav-btn btn-nav-warning" title="Kelola Manajemen Pengguna">
+        <?php if (in_array($_SESSION['role'], ['super_admin', 'admin'])): ?>
+            <a href="admin/index.php" class="nav-btn btn-nav-warning" title="Buka Panel Dashboard Administrator">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="9" cy="7" r="4"></circle>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    <rect x="3" y="3" width="7" height="9"></rect>
+                    <rect x="14" y="3" width="7" height="5"></rect>
+                    <rect x="14" y="12" width="7" height="9"></rect>
+                    <rect x="3" y="16" width="7" height="5"></rect>
                 </svg>
-                <span>Kelola Users</span>
+                <span>Dashboard Admin</span>
             </a>
         <?php endif; ?>
 
@@ -205,15 +215,23 @@ if (isset($_GET['success'])) {
             </span>
         </a>
 
+        <a href="katalog.php" class="nav-btn btn-nav-secondary">
+            <span>🌐 Mode Pengunjung Publik</span>
+        </a>
         <a href="profile.php" class="nav-btn btn-nav-secondary">
             <span>👤 Halaman Profil & Foto</span>
         </a>
         <a href="project_tambah.php" class="nav-btn btn-nav-primary">
             <span>+ Tambah Karya Digital</span>
         </a>
+        <?php if (in_array($_SESSION['role'], ['super_admin', 'admin'])): ?>
+            <a href="admin/index.php" class="nav-btn btn-nav-warning">
+                <span>🛡️ Panel Dashboard Admin</span>
+            </a>
+        <?php endif; ?>
         <?php if ($_SESSION['role'] === 'super_admin'): ?>
             <a href="admin/users.php" class="nav-btn btn-nav-warning">
-                <span>🛡️ Kelola Manajemen Users</span>
+                <span>👥 Kelola Manajemen Users</span>
             </a>
         <?php endif; ?>
         <a href="auth/logout.php" class="nav-btn btn-nav-danger">
@@ -733,5 +751,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
+
+<!-- Floating Chatbot Widget -->
+<?php include 'chatbot_widget.php'; ?>
+<script src="assets/js/chatbot.js"></script>
+
 </body>
 </html>

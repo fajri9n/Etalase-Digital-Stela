@@ -203,7 +203,7 @@ if ($user_role === 'super_admin') {
             <h1 class="brand-main-title">Stella <span class="brand-gradient-text">Etalase Digital</span></h1>
             <div class="brand-meta-row">
                 <span class="brand-badge-pill">
-                    <span class="brand-live-dot"></span> SMK STELLA MARIS
+                    <span class="brand-live-dot"></span> SMK Telkom Lampung
                 </span>
                 <span class="brand-page-tag">&bull; Profil Pengguna</span>
             </div>
