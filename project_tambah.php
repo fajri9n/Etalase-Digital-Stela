@@ -14,8 +14,15 @@ $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nama_project = trim($_POST['nama_project'] ?? '');
+    $kategori     = trim($_POST['kategori'] ?? 'Web Design');
     $deskripsi    = trim($_POST['deskripsi'] ?? '');
     $link_project = trim($_POST['link_project'] ?? '');
+
+    // Validasi daftar kategori
+    $valid_categories = array_keys(get_project_categories());
+    if (!in_array($kategori, $valid_categories)) {
+        $kategori = 'Web Design';
+    }
 
     if (empty($nama_project) || empty($deskripsi) || empty($link_project)) {
         $error = "Semua bidang teks wajib diisi!";
@@ -41,11 +48,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if (move_uploaded_file($_FILES['gambar']['tmp_name'], $destination)) {
                 try {
-                    $stmt = $pdo->prepare("INSERT INTO projects (user_id, nama_project, deskripsi, gambar, link_project) 
-                                           VALUES (:user_id, :nama, :desk, :img, :link)");
+                    $stmt = $pdo->prepare("INSERT INTO projects (user_id, nama_project, kategori, deskripsi, gambar, link_project) 
+                                           VALUES (:user_id, :nama, :kat, :desk, :img, :link)");
                     $stmt->execute([
                         ':user_id' => $user['id'],
                         ':nama'    => $nama_project,
+                        ':kat'     => $kategori,
                         ':desk'    => $deskripsi,
                         ':img'     => $new_name,
                         ':link'    => $link_project

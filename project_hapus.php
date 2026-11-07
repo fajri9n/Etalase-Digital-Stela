@@ -24,6 +24,10 @@ if ($id) {
             unlink('uploads/' . $project['gambar']);
         }
 
+        // Hapus data like yang berelasi dengan karya ini
+        $delLikes = $pdo->prepare("DELETE FROM project_likes WHERE project_id = :id");
+        $delLikes->execute([':id' => $id]);
+
         // Hapus baris data dari database
         $del = $pdo->prepare("DELETE FROM projects WHERE id = :id");
         $del->execute([':id' => $id]);

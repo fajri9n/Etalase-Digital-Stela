@@ -35,3 +35,68 @@ function get_logged_user($pdo) {
     return $user;
 }
 
+/**
+ * Daftar Kategori Karya Inovasi Digital Stella
+ */
+function get_project_categories() {
+    return [
+        'Web Design' => [
+            'icon' => '🎨',
+            'desc' => 'Desain website, landing page & mockup web interaktif',
+            'class' => 'cat-badge-web-design'
+        ],
+        'Web Development' => [
+            'icon' => '💻',
+            'desc' => 'Aplikasi web fullstack, backend PHP & database',
+            'class' => 'cat-badge-web-dev'
+        ],
+        'UI/UX Design' => [
+            'icon' => '✨',
+            'desc' => 'Desain antarmuka Figma, wireframe & prototipe UX',
+            'class' => 'cat-badge-uiux'
+        ],
+        'Desain Grafis' => [
+            'icon' => '🖌️',
+            'desc' => 'Poster digital, banner, branding & ilustrasi grafis',
+            'class' => 'cat-badge-graphic'
+        ],
+        'Mobile App' => [
+            'icon' => '📱',
+            'desc' => 'Aplikasi mobile Android, iOS, atau Flutter',
+            'class' => 'cat-badge-mobile'
+        ],
+        'Game Development' => [
+            'icon' => '🎮',
+            'desc' => 'Game 2D/3D interaktif (Unity, Godot, Construct)',
+            'class' => 'cat-badge-game'
+        ],
+        'IoT & Robotika' => [
+            'icon' => '🤖',
+            'desc' => 'Internet of Things, Arduino, ESP32 & sistem otomatisasi',
+            'class' => 'cat-badge-iot'
+        ],
+        'Animasi & 3D' => [
+            'icon' => '🎬',
+            'desc' => 'Animasi digital, motion graphic & aset 3D Blender',
+            'class' => 'cat-badge-animation'
+        ],
+        'Lainnya' => [
+            'icon' => '💡',
+            'desc' => 'Proyek inovasi teknologi & karya kreatif lainnya',
+            'class' => 'cat-badge-other'
+        ]
+    ];
+}
+
+/**
+ * Ambil metadata kategori spesifik dengan fallback default
+ */
+function get_category_info($kategori) {
+    $categories = get_project_categories();
+    return $categories[$kategori] ?? [
+        'icon' => '💡',
+        'desc' => 'Karya Digital',
+        'class' => 'cat-badge-other'
+    ];
+}
+
