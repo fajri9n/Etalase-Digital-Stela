@@ -1,9 +1,8 @@
 <?php
 $host = 'sql112.epizy.com';
-$host = 'f0_43361726_db_etalase_stella';
-$db   = 'if0_43361726_db_etalase_stella';
 $user = 'if0_43361726';
-$pass = 'EZgIgF2gShM6CV';
+$pass = 'EZgIgF2gShM6CV'; // Pastikan ganti password ini nanti di hosting
+$db   = 'if0_43361726_db_etalase_stella';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass, [
