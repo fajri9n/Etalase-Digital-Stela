@@ -1,8 +1,8 @@
 <?php
-$host = 'sql112.epizy.com';
-$db   = 'if0_43361726_db_etalase_stella';
-$user = 'if0_43361726';
-$pass = 'EZgIgF2gShM6CV';
+$host = 'localhost';
+$db   = 'db_etalase_stella';
+$user = 'root';
+$pass = '';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass, [
