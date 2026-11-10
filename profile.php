@@ -186,6 +186,7 @@ if ($user_role === 'super_admin') {
     <link rel="stylesheet" href="assets/css/navbar.css">
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/profile.css">
+    <link rel="stylesheet" href="assets/css/chatbot.css?v=<?= time() ?>">
 </head>
 <body>
 

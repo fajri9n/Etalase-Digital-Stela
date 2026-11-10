@@ -61,7 +61,7 @@ foreach ($projects as $pr) {
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/navbar.css">
     <link rel="stylesheet" href="assets/css/main.css">
-    <link rel="stylesheet" href="assets/css/chatbot.css">
+    <link rel="stylesheet" href="assets/css/chatbot.css?v=<?= time() ?>">
 </head>
 <body>
 
