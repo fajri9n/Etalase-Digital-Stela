@@ -41,11 +41,14 @@ $top_kategori = !empty($kategori_stats) ? $kategori_stats[0]['kategori'] : 'Belu
 
 // 3. Top 5 Karya Paling Disukai (Leaderboard)
 $stmtTop = $pdo->query("
-    SELECT projects.*, users.nama AS pembuat, COUNT(project_likes.id) AS total_likes 
+    SELECT projects.*, users.nama AS pembuat, COALESCE(likes_count.total_likes, 0) AS total_likes 
     FROM projects 
     JOIN users ON projects.user_id = users.id 
-    LEFT JOIN project_likes ON projects.id = project_likes.project_id 
-    GROUP BY projects.id 
+    LEFT JOIN (
+        SELECT project_id, COUNT(*) AS total_likes 
+        FROM project_likes 
+        GROUP BY project_id
+    ) AS likes_count ON projects.id = likes_count.project_id 
     ORDER BY total_likes DESC, projects.created_at DESC 
     LIMIT 5
 ");
@@ -57,10 +60,14 @@ $filter_kat = trim($_GET['kat'] ?? '');
 
 $sqlAll = "
     SELECT projects.*, users.nama AS pembuat, users.email AS pembuat_email, 
-           COUNT(project_likes.id) AS total_likes 
+           COALESCE(likes_count.total_likes, 0) AS total_likes 
     FROM projects 
     JOIN users ON projects.user_id = users.id 
-    LEFT JOIN project_likes ON projects.id = project_likes.project_id 
+    LEFT JOIN (
+        SELECT project_id, COUNT(*) AS total_likes 
+        FROM project_likes 
+        GROUP BY project_id
+    ) AS likes_count ON projects.id = likes_count.project_id
 ";
 $params = [];
 $conditions = [];
@@ -79,7 +86,7 @@ if (!empty($conditions)) {
     $sqlAll .= " WHERE " . implode(" AND ", $conditions);
 }
 
-$sqlAll .= " GROUP BY projects.id ORDER BY projects.created_at DESC";
+$sqlAll .= " ORDER BY projects.created_at DESC";
 
 $stmtAll = $pdo->prepare($sqlAll);
 $stmtAll->execute($params);

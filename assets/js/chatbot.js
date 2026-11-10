@@ -229,7 +229,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Event Klik FAQ Chips
-    document.querySelectorAll(".faq-chip").forEach(chip => {
+    document.querySelectorAll(".faq-chip, .quick-chip").forEach(chip => {
         chip.addEventListener("click", function () {
             const question = this.getAttribute("data-question");
             if (question) {

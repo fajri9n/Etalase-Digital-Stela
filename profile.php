@@ -636,5 +636,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 </script>
+
+<!-- Floating Chatbot Widget -->
+<?php include 'chatbot_widget.php'; ?>
+<script src="assets/js/chatbot.js"></script>
+
 </body>
 </html>

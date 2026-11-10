@@ -61,7 +61,7 @@
     </div>
 
     <!-- Floating Chat Bubble Launcher Button -->
-    <button type="button" class="chatbot-bubble-btn" id="chatbotToggleBtn" title="Buka Asisten Stella" aria-label="Buka Chatbot">
+    <button type="button" class="chatbot-bubble-btn chatbot-toggle-btn" id="chatbotToggleBtn" title="Buka Asisten Stella" aria-label="Buka Chatbot">
         <span class="bubble-online-pulse"></span>
         <svg class="icon-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>

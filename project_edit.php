@@ -131,6 +131,7 @@ if ($user_role === 'super_admin') {
     <link rel="stylesheet" href="assets/css/navbar.css">
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/form.css">
+    <link rel="stylesheet" href="assets/css/chatbot.css">
 </head>
 <body>
 
@@ -507,5 +508,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 </script>
+
+<!-- Floating Chatbot Widget -->
+<?php include 'chatbot_widget.php'; ?>
+<script src="assets/js/chatbot.js"></script>
+
 </body>
 </html>

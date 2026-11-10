@@ -620,6 +620,12 @@ body {
     margin-left: 6px;
 }
 
+.category-scroll-hint {
+    font-size: 11.5px;
+    color: #94a3b8;
+    font-weight: 600;
+}
+
 .category-filter-scroll {
     display: flex;
     align-items: center;
@@ -628,6 +634,16 @@ body {
     padding: 4px 2px 8px;
     scrollbar-width: thin;
     scrollbar-color: rgba(220, 38, 38, 0.3) transparent;
+}
+
+@media (min-width: 1200px) {
+    .category-filter-scroll {
+        flex-wrap: wrap;
+        overflow-x: visible;
+    }
+    .category-scroll-hint {
+        display: none;
+    }
 }
 
 .category-filter-scroll::-webkit-scrollbar {

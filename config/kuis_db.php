@@ -1,17 +1,38 @@
 <?php
-$host = 'localhost';
-$db   = 'db_etalase_stella';
-$user = 'root';
-$pass = '';
+/**
+ * ==========================================================
+ * ETALASE DIGITAL STELLA - KONFIGURASI DATABASE
+ * Multi-Environment: Localhost (XAMPP/LAMPP) & Remote Hosting
+ * ==========================================================
+ */
+
+$is_remote = (
+    (isset($_SERVER['HTTP_HOST']) && (strpos($_SERVER['HTTP_HOST'], 'xo.je') !== false || strpos($_SERVER['HTTP_HOST'], 'epizy') !== false)) ||
+    (isset($_SERVER['SERVER_NAME']) && (strpos($_SERVER['SERVER_NAME'], 'xo.je') !== false || strpos($_SERVER['SERVER_NAME'], 'epizy') !== false))
+);
+
+if ($is_remote) {
+    // Kredensial Hosting InfinityFree (epizy.com / etalase-digital-stela.xo.je)
+    $host = 'sql112.epizy.com';
+    $db   = 'if0_43361726_db_etalase_stella';
+    $user = 'if0_43361726';
+    $pass = 'EZgIgF2gShM6CV';
+} else {
+    // Kredensial Localhost (XAMPP / LAMPP / Dev)
+    $host = 'localhost';
+    $db   = 'db_etalase_stella';
+    $user = 'root';
+    $pass = '';
+}
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass, [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        PDO::ATTR_EMULATE_PREPARES => false
+        PDO::ATTR_EMULATE_PREPARES   => false
     ]);
 
-    // Auto-migration aman untuk memastikan kolom dan tabel penting selalu siap
+    // Auto-migration aman untuk memastikan kolom dan tabel penting selalu siap tanpa error
     try {
         // 1. Pastikan kolom 'foto' ada pada tabel users
         $colFoto = $pdo->query("SHOW COLUMNS FROM `users` LIKE 'foto'");
@@ -37,7 +58,7 @@ try {
             KEY `fk_likes_user` (`user_id`)
         ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
     } catch (Throwable $t) {
-        // Abaikan error pengecekan auto-migration jika izin terbatas
+        // Abaikan jika izin database hosting membatasi eksekusi DDL
     }
 } catch (PDOException $e) {
     die("Koneksi database gagal: " . $e->getMessage());

@@ -190,7 +190,7 @@ foreach ($projects as $pr) {
                 <span>KATEGORI KARYA DIGITAL</span>
                 <span class="category-header-desc">• Pilih bidang untuk menyaring inovasi</span>
             </div>
-            <div style="font-size: 11.5px; color: #94a3b8; font-weight: 600;">
+            <div class="category-scroll-hint">
                 Geser untuk kategori lainnya &rarr;
             </div>
         </div>

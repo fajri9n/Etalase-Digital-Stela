@@ -1,17 +1,23 @@
 -- --------------------------------------------------------
--- Membuat Database
+-- SQL DATABASE: db_etalase_stella
+-- Stella Etalase Digital - SMK Stella Maris / Telkom Lampung
 -- --------------------------------------------------------
-CREATE DATABASE IF NOT EXISTS `db_etalase_stella` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `db_etalase_stella`;
+
+-- Catatan untuk Hosting (InfinityFree/cPanel):
+-- Jika mengimpor lewat phpMyAdmin di hosting yang nama databasenya sudah ditentukan,
+-- baris CREATE DATABASE dan USE di bawah tidak perlu dijalankan (sudah dikomentari).
+
+-- CREATE DATABASE IF NOT EXISTS `db_etalase_stella` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- USE `db_etalase_stella`;
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
 -- --------------------------------------------------------
--- Struktur Tabel `users`
+-- 1. Struktur Tabel `users`
 -- --------------------------------------------------------
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `nama` VARCHAR(100) NOT NULL,
   `email` VARCHAR(150) NOT NULL,
@@ -23,18 +29,19 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
--- Insert Data Dummy untuk `users`
+-- Data Awal Pengguna (Password default: 'password' atau 'admin123')
 -- --------------------------------------------------------
-INSERT INTO `users` (`id`, `nama`, `email`, `password`, `role`) VALUES
-(1, 'Super Admin Stella', 'superadmin@stella.sch.id', '$2y$10$kYJqWNUXVeIjHYXmoprZdOi5NHbcaLUnL0bmHmLKNvAsf29pf3oQG', 'super_admin'),
-(2, 'Admin Stella', 'admin@stella.sch.id', '$2y$10$kYJqWNUXVeIjHYXmoprZdOi5NHbcaLUnL0bmHmLKNvAsf29pf3oQG', 'admin'),
-(3, 'Siswa Stella', 'siswa@stella.sch.id', '$2y$10$kYJqWNUXVeIjHYXmoprZdOi5NHbcaLUnL0bmHmLKNvAsf29pf3oQG', 'siswa'),
-(4, 'syahnurfajri', 'syahnurfajri0@gmail.com', '$2y$10$7jWapHn9RtyHYFL9mfFawOwzcfPfEBfY6PBFHd3b0RPEX2GJJL.ue', 'siswa');
+INSERT INTO `users` (`id`, `nama`, `email`, `password`, `role`, `foto`) VALUES
+(1, 'Super Admin Stella', 'superadmin@stella.sch.id', '$2y$10$kYJqWNUXVeIjHYXmoprZdOi5NHbcaLUnL0bmHmLKNvAsf29pf3oQG', 'super_admin', NULL),
+(2, 'Admin Stella', 'admin@stella.sch.id', '$2y$10$kYJqWNUXVeIjHYXmoprZdOi5NHbcaLUnL0bmHmLKNvAsf29pf3oQG', 'admin', NULL),
+(3, 'Siswa Stella', 'siswa@stella.sch.id', '$2y$10$kYJqWNUXVeIjHYXmoprZdOi5NHbcaLUnL0bmHmLKNvAsf29pf3oQG', 'siswa', NULL),
+(4, 'syahnurfajri', 'syahnurfajri0@gmail.com', '$2y$10$7jWapHn9RtyHYFL9mfFawOwzcfPfEBfY6PBFHd3b0RPEX2GJJL.ue', 'siswa', NULL)
+ON DUPLICATE KEY UPDATE `nama` = VALUES(`nama`);
 
 -- --------------------------------------------------------
--- Struktur Tabel `projects`
+-- 2. Struktur Tabel `projects`
 -- --------------------------------------------------------
-CREATE TABLE `projects` (
+CREATE TABLE IF NOT EXISTS `projects` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` INT(10) UNSIGNED NOT NULL,
   `nama_project` VARCHAR(150) NOT NULL,
@@ -50,9 +57,9 @@ CREATE TABLE `projects` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
--- Struktur Tabel `project_likes`
+-- 3. Struktur Tabel `project_likes`
 -- --------------------------------------------------------
-CREATE TABLE `project_likes` (
+CREATE TABLE IF NOT EXISTS `project_likes` (
   `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   `project_id` INT(10) UNSIGNED NOT NULL,
   `user_id` INT(10) UNSIGNED NOT NULL,
