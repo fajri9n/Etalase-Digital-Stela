@@ -1,5 +1,4 @@
 <?php
-<<<<<<< HEAD
 /**
  * ==========================================================
  * ETALASE DIGITAL STELLA - KONFIGURASI DATABASE
@@ -25,12 +24,6 @@ if ($is_remote) {
     $user = 'root';
     $pass = '';
 }
-=======
-$host = 'sql112.epizy.com';
-$user = 'if0_43361726';
-$pass = 'EZgIgF2gShM6CV'; // Pastikan ganti password ini nanti di hosting
-$db   = 'if0_43361726_db_etalase_stella';
->>>>>>> 782da0a3982b338424cf02c1c17306dc6e143cfc
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass, [

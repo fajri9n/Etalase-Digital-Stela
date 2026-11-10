@@ -421,12 +421,8 @@ foreach ($projects as $pr) {
     </div>
 </div>
 
-<!-- Sertakan Widget Chatbot Floating -->
-<?php include 'chatbot_widget.php'; ?>
-
 <!-- Scripts -->
 <script src="assets/js/navbar.js"></script>
-<script src="assets/js/chatbot.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
@@ -680,5 +676,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
+
+<!-- Floating Chatbot Widget -->
+<?php include 'chatbot_widget.php'; ?>
+<script src="assets/js/chatbot.js"></script>
+
 </body>
 </html>
